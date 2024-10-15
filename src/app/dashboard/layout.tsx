@@ -1,9 +1,9 @@
 'use client'
 
 import {
-  IconArrowLeft,
+  
   IconBrandTabler,
-  IconSettings,
+  
   IconUserBolt,
   IconBuildingSkyscraper,
   IconRobot,
@@ -12,11 +12,10 @@ import {
 } from "@tabler/icons-react";
 import { useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
-import Link from "next/link";
-import { motion } from "framer-motion";
+
 import { cn } from "@/lib/utils";
 import Dashboard from "@/components/Dashboard/dashboard";
-import { useGetAllCompaniesQuery } from "@/lib/rtkqueryAPI/companies";
+
 
 // Define the links for the sidebar
 const links = [
@@ -61,8 +60,7 @@ export default function DashboardLayout({
   // State to control sidebar open/close
   const [open, setOpen] = useState(false);
   
-  // Fetch all companies data
-  const { data } = useGetAllCompaniesQuery();
+
 
   return (
     <div
@@ -93,33 +91,5 @@ export default function DashboardLayout({
   );
 }
 
-// Logo component
-const Logo = () => {
-  return (
-    <Link
-      href="#"
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
-    >
-      <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="font-medium text-black dark:text-white whitespace-pre"
-      >
-        Acet Labs
-      </motion.span>
-    </Link>
-  );
-};
 
-// LogoIcon component
-export const LogoIcon = () => {
-  return (
-    <Link
-      href="#"
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
-    >
-      <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
-    </Link>
-  );
-};
+
