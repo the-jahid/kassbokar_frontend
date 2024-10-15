@@ -2,19 +2,8 @@
 import Image from "next/image";
 
 
-import { cn } from "@/lib/utils";
 import React from "react";
 
-import {
-  IconArrowWaveRightUp,
-  IconBoxAlignRightFilled,
-  IconBoxAlignTopLeft,
-  IconClipboardCopy,
-  IconFileBroken,
-  IconSignature,
-  IconTableColumn,
-} from "@tabler/icons-react";
-import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { WobbleCard } from "@/components/ui/wobble-card";
 
 

@@ -3,7 +3,7 @@ import ExpenseAssumption from "@/components/financialForecast/expenseAssumption"
 import RevenueAssumption from "@/components/financialForecast/revenueAssumption";
 import { Timeline } from "@/components/ui/timeline";
 import { useGetSingleCompanyQuery } from "@/lib/rtkqueryAPI/companies";
-import Image from "next/image";
+
 import { useEffect, useState } from "react";
 
 

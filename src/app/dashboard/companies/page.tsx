@@ -1,6 +1,5 @@
 "use client";
-import React, { useEffect, useId, useRef, useState, useMemo } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import React, {  useId, useRef, useState, useMemo } from "react";
 import { Separator } from "@/components/ui/separator";
 import CreateCompanymodal from "@/components/companies/createCompanymodal";
 import { useGetAllCompaniesQuery } from "@/lib/rtkqueryAPI/companies";

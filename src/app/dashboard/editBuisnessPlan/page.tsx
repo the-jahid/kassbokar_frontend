@@ -1,6 +1,6 @@
 // pages/dashboard/editBuisnessPlan.tsx
 'use client'
-import Image from "next/image";
+
 import React from "react";
 import { Timeline } from "@/components/ui/timeline";
 import { useGetBuisnessPlanQuery } from "@/lib/rtkqueryAPI/buisnessPlan";

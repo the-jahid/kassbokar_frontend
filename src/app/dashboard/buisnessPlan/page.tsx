@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Calendar, ChevronRight, Download, Edit, FileText, Share2, Star } from "lucide-react"
+import { Calendar,  Download, Edit, FileText, Share2, Star } from "lucide-react"
 import {
   IconChartBar,
 
