@@ -83,7 +83,7 @@ const RevenueAssumption = ({ control, errors, handleSubmit }: RevenueAssumptionP
         variant: "default",
       })
 
-      router.push('/dashboard/editBuisnessPlan')
+      // router.push('/dashboard/editBuisnessPlan')
     } catch (error: any) {
       if (error.status === 409) {
         toast({
@@ -173,7 +173,7 @@ const RevenueAssumption = ({ control, errors, handleSubmit }: RevenueAssumptionP
         )}
 
         <Button
-          className="w-full"
+          className="w-full bg-primary rounded-md"
           onClick={handleSubmit(generateBusinessPlan)}
           disabled={isLoading}
         >

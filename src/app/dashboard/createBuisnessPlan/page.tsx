@@ -25,6 +25,7 @@ import Team from '@/components/buisnessPlan/team'
 import { useToast } from '@/hooks/use-toast'
 import ExpenseAssumption from '@/components/buisnessPlan/expenseAssumption'
 import RevenueAssumption from '@/components/buisnessPlan/revenueAssumption'
+import { cn } from '@/lib/utils'
 
 
  // Ensure this path is correct
@@ -89,9 +90,6 @@ const CreateBusinessPlan = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { toast } = useToast()
 
-
-
-
   const methods = useForm<FormData>({
    
     mode: 'onChange',
@@ -142,7 +140,7 @@ const CreateBusinessPlan = () => {
     setIsSubmitting(true)
     try {
     
-      console.log(data)
+     
       toast({
         title: "Success",
         description: "Your business plan has been submitted successfully!",
@@ -161,11 +159,9 @@ const CreateBusinessPlan = () => {
 
   const CurrentStepComponent = steps[currentStep].component
 
-
-
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-4xl mx-auto p-6 space-y-8 bg-white rounded-xl shadow-lg">
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full  mx-auto p-6 space-y-8 bg-white rounded-xl shadow-lg">
         <div className="space-y-2">
           <h1 className="text-3xl font-bold text-center">Create Your Business Plan</h1>
           <p className="text-muted-foreground text-center">Complete all steps to generate your comprehensive business plan</p>
@@ -173,37 +169,32 @@ const CreateBusinessPlan = () => {
 
         <Progress value={(currentStep / (steps.length - 1)) * 100} className="w-full" />
 
-        <div className="flex justify-between mb-8">
-          {steps.map((step, index) => (
-            <TooltipProvider key={index}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    type="button"
-                    onClick={() => setCurrentStep(index)}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      index === currentStep
-                        ? 'bg-primary text-primary-foreground'
-                        : index < currentStep
-                        ? 'bg-primary/50 text-primary-foreground'
-                        : 'bg-secondary text-secondary-foreground'
-                    }`}
-                    disabled={index > currentStep}
-                  >
-                    {index < currentStep ? (
-                      <CheckCircle className="w-6 h-6" />
-                    ) : (
-                      <span>{index + 1}</span>
-                    )}
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{step.title}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ))}
-        </div>
+        <div className="flex flex-col md:flex-row flex-wrap justify-start gap-2 md:gap-4 mb-6 md:mb-8">
+            {steps.map((step, index) => (
+              <button
+                key={index}
+                type="button"
+                onClick={() => setCurrentStep(index)}
+                className={`flex items-center p-2 rounded-btn text-sm md:text-base ${
+                  index === currentStep
+                    ? 'bg-primary text-primary-foreground'
+                    : index < currentStep
+                    ? 'bg-primary/50 text-primary-foreground'
+                    : ' text-secondary-foreground'
+                }`}
+                disabled={index > currentStep}
+              >
+                <span className="w-6 h-6 flex items-center justify-center rounded-full mr-2 bg-white text-primary">
+                  {index < currentStep ? (
+                    <CheckCircle className="w-4 h-4" />
+                  ) : (
+                    <span>{index + 1}</span>
+                  )}
+                </span>
+                {step.title}
+              </button>
+            ))}
+          </div>
 
         <div className="min-h-[400px] p-6 border rounded-lg">
           <AnimatePresence mode="wait">
@@ -240,7 +231,7 @@ const CreateBusinessPlan = () => {
               )}
             </Button>
           ) : (
-            <Button type="button" onClick={nextStep} disabled={isSubmitting}>
+            <Button className={cn('bg-primary rounded-btn ')} type="button" onClick={nextStep} disabled={isSubmitting}>
               Next
             </Button>
           )}

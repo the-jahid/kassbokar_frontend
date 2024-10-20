@@ -1,102 +1,146 @@
+'use client'
 
-import React from 'react';
-import { useForm, Controller, useFieldArray, Control } from 'react-hook-form';
-import { Separator } from '../ui/separator';
-
+import React, { useState } from 'react'
+import { useForm, Controller, useFieldArray, Control } from 'react-hook-form'
+import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { AlertCircle, Loader2, Plus, Trash2 } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useToast } from '@/hooks/use-toast'
 
 interface CompetitionProps {
   control: Control<any>
-  errors: any;
+  errors: any
 }
 
-const Competition = ({ control, errors }: CompetitionProps ) => {
+export default function Competition({ control, errors }: CompetitionProps) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'direct_competitors',
-  });
+  })
+
+  const [isGenerating, setIsGenerating] = useState(false)
+  const { toast } = useToast()
+
+  const handleGenerateAI = async () => {
+    setIsGenerating(true)
+    // Simulating AI generation
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    setIsGenerating(false)
+    toast({
+      title: "AI Generation Complete",
+      description: "Competitors have been generated.",
+    })
+  }
 
   return (
-    <div className="p-5">
-         <div className="my-5">
-                    <div className='mb-10 space-y-3' >
-                    <h2 className='text-xl font-semibold' >Competitive </h2>
-                    <Separator  />
-          </div>
-    </div>
-      <div className="mb-5 space-y-6">
-        <div className="flex justify-between items-center mb-3">
-          <div className='space-y-2' >
+    <div className="p-4 md:p-6 space-y-6">
+      <div className="space-y-3">
+        <h2 className="text-xl md:text-2xl font-semibold">Competitive Analysis</h2>
+        <Separator />
+      </div>
+
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="space-y-2">
             <h2 className="text-lg font-semibold">Direct Competitors</h2>
-            <p>Please add each of your direct competitors below, or let the AI generate them (recommended):</p>
+            <p className="text-sm text-muted-foreground">Please add each of your direct competitors below, or let the AI generate them (recommended):</p>
           </div>
 
-          <button className='btn btn-outline'>Generate from AI</button>
-
+          <Button
+            variant="outline"
+            onClick={handleGenerateAI}
+            disabled={isGenerating}
+            className="w-full sm:w-auto"
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              'Generate from AI'
+            )}
+          </Button>
         </div>
         
         {fields.map((item, index) => (
-          <div key={item.id} className="my-5 p-5 border rounded-box">
-           <div className=' flex space-x-4' >
-           <div className="mb-4 flex-1 ">
-              <label className="block mb-2 font-bold">Competitor Name</label>
-              <Controller
-                name={`direct_competitors.${index}.competitor_name`}
-                control={control}
-                rules={{ required: 'Please enter the competitor name' }}
-                render={({ field }) => (
-                  <input
-                    {...field}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          <Card key={item.id} className="my-4">
+            <CardContent className="p-4 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor={`competitor_name_${index}`}>Competitor Name</Label>
+                  <Controller
+                    name={`direct_competitors.${index}.competitor_name`}
+                    control={control}
+                    rules={{ required: 'Please enter the competitor name' }}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        id={`competitor_name_${index}`}
+                        placeholder="Enter competitor name"
+                      />
+                    )}
                   />
-                )}
-              />
-              {errors.direct_competitors?.[index]?.competitor_name && (
-                <p className="mt-2 text-sm text-red-600">
-                  {errors.direct_competitors[index].competitor_name.message}
-                </p>
-              )}
-            </div>
+                  {errors.direct_competitors?.[index]?.competitor_name && (
+                    <Alert variant="destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        {errors.direct_competitors[index].competitor_name.message}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </div>
 
-            <div className="mb-4 flex-1">
-              <label className="block mb-2 font-bold">Locations</label>
-              <Controller
-                name={`direct_competitors.${index}.locations`}
-                control={control}
-                rules={{ required: 'Please enter the locations' }}
-                render={({ field }) => (
-                  <input
-                    {...field}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                <div className="space-y-2">
+                  <Label htmlFor={`locations_${index}`}>Locations</Label>
+                  <Controller
+                    name={`direct_competitors.${index}.locations`}
+                    control={control}
+                    rules={{ required: 'Please enter the locations' }}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        id={`locations_${index}`}
+                        placeholder="Enter locations"
+                      />
+                    )}
                   />
-                )}
-              />
-              {errors.direct_competitors?.[index]?.locations && (
-                <p className="mt-2 text-sm text-red-600">
-                  {errors.direct_competitors[index].locations.message}
-                </p>
-              )}
-            </div>
-           </div>
+                  {errors.direct_competitors?.[index]?.locations && (
+                    <Alert variant="destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        {errors.direct_competitors[index].locations.message}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </div>
+              </div>
 
-            <button
-              type="button"
-              className="btn btn-danger"
-              onClick={() => remove(index)}
-            >
-              Remove
-            </button>
-          </div>
+              <Button
+                type="button"
+                variant="destructive"
+                className="w-full sm:w-auto"
+                onClick={() => remove(index)}
+              >
+                <Trash2 className="mr-2 h-4 w-4" /> Remove
+              </Button>
+            </CardContent>
+          </Card>
         ))}
       </div>
-      <button
-            type="button"
-            className="btn btn-outline"
-            onClick={() => append({ competitor_name: '', locations: '' })}
-          >
-            Add Competitor
-          </button>
-    </div>
-  );
-};
 
-export default Competition;
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full sm:w-auto"
+        onClick={() => append({ competitor_name: '', locations: '' })}
+      >
+        <Plus className="mr-2 h-4 w-4" /> Add Competitor
+      </Button>
+    </div>
+  )
+}

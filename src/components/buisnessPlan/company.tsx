@@ -7,19 +7,18 @@ import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { AlertCircle, Loader2, Plus, Trash2 } from "lucide-react"
+import { AlertCircle, Loader2, Plus, Trash2, DollarSign } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useToast } from '@/hooks/use-toast'
-
 
 interface CompanyProps {
   control: Control<any>
   errors: any
 }
 
-const Company = ({ control, errors }: CompanyProps) => {
+export default function Company({ control, errors }: CompanyProps) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'products_services',
@@ -40,18 +39,20 @@ const Company = ({ control, errors }: CompanyProps) => {
   }
 
   return (
-    <Card className="w-full max-w-4xl mx-auto my-8">
+    <Card className="w-full max-w-4xl mx-auto my-4 md:my-8">
       <CardHeader>
-        <CardTitle>Company Information</CardTitle>
+        <CardTitle className="text-xl md:text-2xl">Company Information</CardTitle>
+        <CardDescription className="text-sm md:text-base">Provide details about your company's success factors and products/services.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
             <h3 className="text-lg font-semibold">Success Factors</h3>
             <Button 
               onClick={handleGenerateAI} 
               disabled={isGenerating}
               variant="outline"
+              className="w-full sm:w-auto"
             >
               {isGenerating ? (
                 <>
@@ -64,7 +65,7 @@ const Company = ({ control, errors }: CompanyProps) => {
             </Button>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="success_factors">
+            <Label htmlFor="success_factors" className="text-sm md:text-base">
               Please explain the unique features of your business compared to the competitors.
             </Label>
             <Controller
@@ -77,7 +78,7 @@ const Company = ({ control, errors }: CompanyProps) => {
                     {...field}
                     id="success_factors"
                     placeholder="Enter your company's success factors"
-                    className="min-h-[100px]"
+                    className="min-h-[100px] md:min-h-[150px]"
                   />
                   {errors.success_factors && (
                     <Alert variant="destructive">
@@ -96,13 +97,11 @@ const Company = ({ control, errors }: CompanyProps) => {
         <Separator />
 
         <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <h3 className="text-lg font-semibold">Products/Services & Pricing</h3>
-              <p className="text-sm text-muted-foreground">
-                Please list each of your businesses' products and/or services below:
-              </p>
-            </div>
+          <div>
+            <h3 className="text-lg font-semibold">Products/Services & Pricing</h3>
+            <p className="text-sm text-muted-foreground">
+              Please list each of your businesses' products and/or services below:
+            </p>
           </div>
 
           <AnimatePresence>
@@ -116,9 +115,9 @@ const Company = ({ control, errors }: CompanyProps) => {
               >
                 <Card className="mb-4">
                   <CardContent className="pt-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                       <div className="space-y-2">
-                        <Label htmlFor={`product_name_${index}`}>Product/Service Name</Label>
+                        <Label htmlFor={`product_name_${index}`} className="text-sm md:text-base">Product/Service Name</Label>
                         <Controller
                           name={`products_services.${index}.product_service_name`}
                           control={control}
@@ -142,17 +141,21 @@ const Company = ({ control, errors }: CompanyProps) => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor={`price_${index}`}>Price</Label>
+                        <Label htmlFor={`price_${index}`} className="text-sm md:text-base">Price</Label>
                         <Controller
                           name={`products_services.${index}.price`}
                           control={control}
                           rules={{ required: 'Please enter the price' }}
                           render={({ field }) => (
-                            <Input
-                              {...field}
-                              id={`price_${index}`}
-                              placeholder="Enter price"
-                            />
+                            <div className="relative">
+                              <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                              <Input
+                                {...field}
+                                id={`price_${index}`}
+                                placeholder="Enter price"
+                                className="pl-8"
+                              />
+                            </div>
                           )}
                         />
                         {errors.products_services?.[index]?.price && (
@@ -167,7 +170,7 @@ const Company = ({ control, errors }: CompanyProps) => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor={`description_${index}`}>Description/Benefits</Label>
+                      <Label htmlFor={`description_${index}`} className="text-sm md:text-base">Description/Benefits</Label>
                       <Controller
                         name={`products_services.${index}.product_service_description_benefits`}
                         control={control}
@@ -194,7 +197,7 @@ const Company = ({ control, errors }: CompanyProps) => {
                     <Button
                       type="button"
                       variant="destructive"
-                      className="mt-4"
+                      className="mt-4 w-full sm:w-auto"
                       onClick={() => remove(index)}
                     >
                       <Trash2 className="mr-2 h-4 w-4" /> Remove
@@ -208,6 +211,7 @@ const Company = ({ control, errors }: CompanyProps) => {
           <Button
             type="button"
             variant="outline"
+            className="w-full sm:w-auto"
             onClick={() => append({ product_service_name: '', price: '', product_service_description_benefits: '' })}
           >
             <Plus className="mr-2 h-4 w-4" /> Add Product/Service
@@ -217,5 +221,3 @@ const Company = ({ control, errors }: CompanyProps) => {
     </Card>
   )
 }
-
-export default Company

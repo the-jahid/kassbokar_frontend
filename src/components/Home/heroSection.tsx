@@ -2,35 +2,20 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { motion, useAnimation, useMotionValue, useTransform } from "framer-motion"
+import { motion, useAnimation } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Compare } from "@/components/ui/compare"
 import { useInView } from "react-intersection-observer"
 import Link from "next/link"
+import { ArrowRight, BarChart, PieChart, TrendingUp, Zap } from "lucide-react"
 
 const HeroSection = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   })
 
   const controls = useAnimation()
-  const y = useMotionValue(0)
-  const opacity = useTransform(y, [-100, 0, 100], [0, 1, 0])
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
-    }
-
-    window.addEventListener("mousemove", handleMouseMove)
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove)
-    }
-  }, [])
 
   useEffect(() => {
     if (inView) {
@@ -38,19 +23,7 @@ const HeroSection = () => {
     }
   }, [controls, inView])
 
-  const imageVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    },
-  }
-
-  const textVariants = {
+  const variants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
@@ -62,114 +35,130 @@ const HeroSection = () => {
     },
   }
 
+  const backgroundIcons = [BarChart, PieChart, TrendingUp]
+
   return (
-    <section ref={ref} className="relative min-h-screen overflow-hidden bg-gradient-to-br from-blue-100 to-purple-100">
-      <motion.div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: "url('/grid-pattern.svg')",
-          backgroundSize: "cover",
-          opacity: 0.1,
-        }}
-        animate={{
-          x: mousePosition.x * 0.02,
-          y: mousePosition.y * 0.02,
-        }}
-      />
-      <div className="container mx-auto px-4 py-20">
-        <div className="hero-content flex flex-col lg:flex-row items-center justify-between">
+    <section ref={ref} className="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 py-16 md:py-24">
+      <div className="absolute inset-0 z-0">
+        {backgroundIcons.map((Icon, index) => (
           <motion.div
-            className="lg:w-1/2 mb-10 lg:mb-0"
-            initial="hidden"
-            animate={controls}
-            variants={imageVariants}
+            key={index}
+            className="absolute text-gray-200"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              fontSize: `${Math.random() * 40 + 20}px`,
+            }}
+            animate={{
+              y: [0, -10, 0],
+              x: [0, 5, 0],
+              rotate: [0, 5, 0],
+            }}
+            transition={{
+              duration: Math.random() * 5 + 5,
+              repeat: Infinity,
+              repeatType: "reverse",
+            }}
           >
-            <Compare
-              firstImage="https://i.ibb.co.com/sJdc8jd/18363.jpg"
-              secondImage="https://i.ibb.co.com/GMMrnGV/4668603.jpg"
-              secondImageClassname="object-cover object-left-top"
-              className="h-[250px] w-[200px] md:h-[500px] md:w-[500px] rounded-lg shadow-2xl"
-              slideMode="hover"
-              autoplay={true}
-            />
+            <Icon />
           </motion.div>
+        ))}
+      </div>
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="flex flex-col lg:flex-row items-center justify-between">
           <motion.div
-            className="lg:w-1/2 relative"
+            className="lg:w-1/2 mb-12 lg:mb-0"
             initial="hidden"
             animate={controls}
-            variants={textVariants}
+            variants={variants}
           >
-            <motion.h1
-              className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600"
-              style={{ y, opacity }}
-              drag="y"
-              dragConstraints={{ top: 0, bottom: 0 }}
-            >
-              AI-Powered Business Strategy Creator
-            </motion.h1>
-            <motion.div
-              className="absolute top-0 -right-5"
-              animate={{
-                rotate: [0, 10, -10, 0],
-                scale: [1, 1.2, 1],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                repeatType: "reverse",
-              }}
-            >
-              <Image src="/Lightning1.png" width={30} height={30} alt="lightning" priority />
-            </motion.div>
-            <motion.p
-              className="text-lg mb-8 text-gray-700"
-              variants={textVariants}
-            >
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-gray-900 leading-tight">
+              AI-Powered <span className="text-primary">Business Strategy</span> Creator
+            </h1>
+            <p className="text-xl mb-8 text-gray-700 leading-relaxed">
               Craft tailored business plans, insightful market research, and strategic roadmaps with our AI, built on expertise from thousands of successful projects.
-            </motion.p>
+            </p>
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Button className={cn('bg-primary text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg')} >
-               <Link href={'/dashboard/createBuisnessPlan'}>Generate Buisness Plan</Link>
+              <Button asChild className={cn('bg-primary text-white px-8 py-4 rounded-md text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300')}>
+                <Link href="/dashboard/createBusinessPlan">
+                  Generate Business Plan
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
               </Button>
             </motion.div>
-            <motion.div
-              className="flex space-x-8 mt-8"
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: {
-                    staggerChildren: 0.2,
-                  },
-                },
-              }}
-            >
-              {["OpenAI Logo.png", "Goodle AI Logo.png"].map((logo, index) => (
-                <motion.div
-                  key={index}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: { opacity: 1, y: 0 },
-                  }}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <Image src={`/${logo}`} width={100} height={100} alt={`AI Logo ${index + 1}`} />
-                </motion.div>
-              ))}
-            </motion.div>
+          </motion.div>
+          <motion.div
+            className="lg:w-1/2"
+            initial="hidden"
+            animate={controls}
+            variants={variants}
+          >
+            <div className="relative">
+              <motion.div
+                className="absolute -top-4 -left-4 -right-4 -bottom-4 bg-primary/10 rounded-2xl"
+                animate={{
+                  scale: [1, 1.02, 1],
+                  rotate: [0, 1, 0],
+                }}
+                transition={{
+                  duration: 5,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                }}
+              />
+              <Image
+                src="https://i.ibb.co.com/sJdc8jd/18363.jpg"
+                width={700}
+                height={500}
+                alt="Business Strategy Illustration"
+                className="rounded-xl shadow-2xl"
+              />
+              <motion.div
+                className="absolute -top-6 -right-6 bg-yellow-400 rounded-full p-3 shadow-lg"
+                animate={{
+                  scale: [1, 1.2, 1],
+                  rotate: [0, 10, 0],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                }}
+              >
+                <Zap className="h-8 w-8 text-white" />
+              </motion.div>
+            </div>
           </motion.div>
         </div>
+        <motion.div
+          className="mt-16 flex justify-center space-x-12"
+          initial="hidden"
+          animate={controls}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.2,
+              },
+            },
+          }}
+        >
+          {["OpenAI", "Google AI"].map((logo, index) => (
+            <motion.div
+              key={index}
+              variants={variants}
+              className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+              whileHover={{ y: -5 }}
+            >
+              <Image src={`/${logo.toLowerCase().replace(' ', '-')}-logo.png`} width={120} height={48} alt={`${logo} Logo`} />
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
-      <motion.div
-        className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-white to-transparent"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 1 }}
-      />
     </section>
   )
 }

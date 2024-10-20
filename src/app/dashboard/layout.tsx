@@ -8,7 +8,9 @@ import {
   IconBuildingSkyscraper,
   IconRobot,
   IconUsers,
-  IconCalendarTime
+  IconCalendarTime,
+  IconReportSearch,
+  IconBusinessplan
 } from "@tabler/icons-react";
 import { useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
@@ -30,6 +32,11 @@ const links = [
     icon: <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
   },
   {
+    label: "Pitch Deck",
+    href: "/dashboard/pitchDeck",
+    icon: <IconBusinessplan className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
+  },
+  {
     label: "Companies",
     href: "/dashboard/companies",
     icon: <IconBuildingSkyscraper className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
@@ -38,6 +45,11 @@ const links = [
     label: "My AI Advisor",
     href: "/dashboard/aiAdvisor",
     icon: <IconRobot className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
+  },
+  {
+    label: "Market Research",
+    href: "/dashboard/marketResearch",
+    icon: <IconReportSearch className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
   },
   {
     label: "Investor List",

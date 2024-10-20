@@ -11,7 +11,7 @@ import Link from "next/link";
   import { TbMenuDeep } from "react-icons/tb";
   import { CiHome } from "react-icons/ci";
   import { MdDashboard } from "react-icons/md";
-  import { IoIosPricetags } from "react-icons/io";
+  import { IoIosBusiness, IoIosFastforward, IoIosPricetags } from "react-icons/io";
   import { Separator } from "@/components/ui/separator"
 
 const PhoneScreenNav = () => {
@@ -44,6 +44,20 @@ const PhoneScreenNav = () => {
                             <IoIosPricetags />
                         <Link href='/pricing' >
                                 Pricing
+                        </Link>
+                   </div>
+                   <Separator />
+                   <div className="flex items-center space-x-4" >
+                            <IoIosBusiness />
+                        <Link href='/buisnessPlan' >
+                                Buisness Plan
+                        </Link>
+                   </div>
+                   <Separator />
+                   <div className="flex items-center space-x-4" >
+                            <IoIosFastforward />
+                        <Link href='/pitchDeck' >
+                                Pitch deck
                         </Link>
                    </div>
                    <Separator />

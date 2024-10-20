@@ -79,7 +79,7 @@ export default function InvestorList() {
   const progress = ((currentStep + 1) / steps.length) * 100
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex h-screen bg-gray-100">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex">
       {/* Sidebar */}
 
       {/* Main Content */}

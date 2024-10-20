@@ -1,189 +1,226 @@
 "use client"
 
-import React from "react"
-import Image from "next/image"
-import { motion } from "framer-motion"
+import React, { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card"
-import { FloatingDock } from "@/components/ui/floating-dock"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { motion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Calendar,  Download, Edit, FileText, Share2, Star } from "lucide-react"
-import {
-  IconChartBar,
+import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { FileText, Edit, Download, PieChart, BarChart, TrendingUp, DollarSign, Users, Target, Briefcase, LineChart, Presentation, Zap, Layers, ShoppingCart, Globe, Inbox, CreditCard, Percent, Shuffle, Delete, Loader2 } from "lucide-react"
+import { useDeleteBusinessPlanMutation, useGetBuisnessPlanQuery } from "@/lib/rtkqueryAPI/buisnessPlan"
+import { useDeleteFinancialForecastMutation, useGetFinancialForecastQuery } from "@/lib/rtkqueryAPI/financialForecast"
+import { toast } from "@/hooks/use-toast"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
-  IconPresentationAnalytics,
- 
-} from "@tabler/icons-react"
 
-const financialLinks = [
-  {
-    title: "Financial Forecast",
-    icon: <IconPresentationAnalytics className="h-5 w-5" />,
-    href: "/dashboard/financialForecast",
-  },
-  {
-    title: "Charts",
-    icon: <IconChartBar className="h-5 w-5" />,
-    href: "/dashboard/financialForecastcharts",
-  },
- 
-  
+const backgroundIcons = [
+  FileText, PieChart, BarChart, TrendingUp, DollarSign, Users, Target, Briefcase, LineChart, Zap, Layers, ShoppingCart, Globe, Inbox, CreditCard, Percent, Shuffle
 ]
 
-export default function BusinessPlanPage() {
+export default function BusinessPlanDashboard() {
+  const companyID = localStorage.getItem('selectedCompanyId') || ''
+  const { data: buisnessPlanData, isLoading: isBuisnessPlanLoading, refetch } = useGetBuisnessPlanQuery(companyID)
+  const { data: financialForecastData, isLoading: isFinancialForecastLoading } = useGetFinancialForecastQuery(companyID)
+  const [deleteBuisnessPlan, { isLoading: isDeleting }] = useDeleteBusinessPlanMutation()
+  const [deleteFinancialForecast] = useDeleteFinancialForecastMutation()
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleCreate = () => router.push('/dashboard/createBuisnessPlan')
   const handleEdit = () => router.push('/dashboard/editBuisnessPlan')
   const handleDownload = () => console.log("Download button clicked")
 
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8 text-center">Business Plan Dashboard</h1>
-      <div className="grid md:grid-cols-2 gap-8">
-        <Card className="w-full overflow-hidden">
-          <motion.div
-            whileHover={{ scale: 1.03 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Image
-              src="https://i.ibb.co.com/NjCrNJg/5608318.jpg"
-              width={800}
-              height={400}
-              alt="Business Plan Image"
-              className="w-full h-64 object-cover"
-            />
-          </motion.div>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-2xl font-bold">Business Plan</CardTitle>
-              <Badge variant="secondary" className="text-xs">NEW</Badge>
-            </div>
-            <CardDescription>Comprehensive strategy for success</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-4">
-              Our innovative business plan outlines a clear path to market dominance and sustainable growth.
-            </p>
-            <div className="flex items-center space-x-4 mb-4">
-              <Calendar className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm">Last updated: 2 days ago</span>
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
-            <div className="flex justify-between items-center w-full">
-              <TooltipProvider>
-                <div className="flex space-x-2">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon">
-                        <Share2 className="w-4 h-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Share</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon">
-                        <Star className="w-4 h-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Favorite</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              </TooltipProvider>
-            </div>
-            <div className="flex justify-between w-full">
-              <Button onClick={handleCreate} className="flex-1 mr-2">
-                <FileText className="w-4 h-4 mr-2" />
-                Create
-              </Button>
-              <Button onClick={handleEdit} variant="outline" className="flex-1 mx-2">
-                <Edit className="w-4 h-4 mr-2" />
-                Edit
-              </Button>
-              <Button onClick={handleDownload} variant="secondary" className="flex-1 ml-2">
-                <Download className="w-4 h-4 mr-2" />
-                Download
-              </Button>
-            </div>
-          </CardFooter>
-        </Card>
+  const handleDelete = async (company_id:string) => {
+    try {
+      if (buisnessPlanData?.id) {
+        await deleteBuisnessPlan(company_id).unwrap()
+        await deleteFinancialForecast(company_id).unwrap()
+        toast({
+          title: "Business plan deleted successfully",
+          variant: "default",
+        })
+        refetch()
+        window.location.reload()
+      }
+    } catch (error) {
+      toast({
+        title: "Error deleting business plan",
+        description: "Please try again later.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsDeleteModalOpen(false)
+    }
+  }
 
-        <CardContainer className="inter-var">
-          <CardBody className="bg-gray-50 relative group/card dark:bg-black dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-dot-white/[0.2] dark:border-white/[0.2] border-black/[0.1] w-full h-full rounded-xl p-6 border">
-            <CardItem
-              translateZ="50"
-              className="text-xl font-bold text-neutral-600 dark:text-white"
+  if (!mounted) return null
+
+  const isLoading = isBuisnessPlanLoading || isFinancialForecastLoading
+  const isBuisnessPlanNotAvailable = !buisnessPlanData
+  const isFinancialForecastNotAvailable = !financialForecastData
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden">
+      {backgroundIcons.map((Icon, index) => (
+        <motion.div
+          key={index}
+          className="absolute text-gray-200 opacity-10"
+          style={{
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            fontSize: `${Math.random() * 20 + 10}px`,
+          }}
+          animate={{
+            y: [0, -10, 0],
+            x: [0, 5, 0],
+            rotate: [0, 10, 0],
+          }}
+          transition={{
+            duration: Math.random() * 5 + 5,
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
+        >
+          <Icon />
+        </motion.div>
+      ))}
+      <div className="container mx-auto px-4 py-12 relative z-10">
+        <Tabs defaultValue="business-plan" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="business-plan" className="text-lg">Business Plan</TabsTrigger>
+            <TabsTrigger value="financial-model" className="text-lg">Financial Model</TabsTrigger>
+          </TabsList>
+          <TabsContent value="business-plan">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
             >
-              Financial Model
-            </CardItem>
-            <CardItem
-              as="p"
-              translateZ="60"
-              className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300"
+              <Card className="bg-white shadow-lg">
+                <CardHeader className="bg-blue-50">
+                  <CardTitle className="text-2xl text-blue-800">Business Plan</CardTitle>
+                  <CardDescription className="text-blue-600">Comprehensive strategy for success</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  {isLoading ? (
+                    <div className="flex items-center justify-center h-24">
+                      <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-gray-600 mb-4">
+                        {isBuisnessPlanNotAvailable
+                          ? "Create a business plan to outline your path to success."
+                          : "Our innovative business plan outlines a clear path to market dominance and sustainable growth."}
+                      </p>
+                      {!isBuisnessPlanNotAvailable && (
+                        <p className="text-sm text-gray-500">Last updated: 2 days ago</p>
+                      )}
+                    </>
+                  )}
+                </CardContent>
+                <CardFooter className="flex flex-col space-y-4 sm:flex-row sm:justify-between sm:space-y-0 bg-gray-50 mt-4">
+                  <Button onClick={handleCreate} className="w-full sm:w-auto bg-primary hover:bg-blue-700">
+                    <FileText className="w-4 h-4 mr-2" />
+                    Create
+                  </Button>
+                  <Button
+                    disabled={isBuisnessPlanNotAvailable}
+                    onClick={handleEdit}
+                    variant="outline"
+                    className="w-full sm:w-auto border-blue-300 text-blue-600 hover:bg-primary"
+                  >
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit
+                  </Button>
+                  {!isBuisnessPlanNotAvailable && (
+                    <Button
+                      onClick={() => setIsDeleteModalOpen(true)}
+                      className="w-full sm:w-auto bg-red-500 hover:bg-red-700"
+                    >
+                      <Delete className="w-4 h-4 mr-2" />
+                      Delete
+                    </Button>
+                  )}
+                </CardFooter>
+              </Card>
+            </motion.div>
+          </TabsContent>
+          <TabsContent value="financial-model">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
             >
-              Explore your business's financial projections and analysis
-            </CardItem>
-            <CardItem translateZ="100" className="w-full mt-4">
-              <Image
-                src="https://i.ibb.co.com/NjCrNJg/5608318.jpg"
-                height={1000}
-                width={1000}
-                className="h-60 w-full object-cover rounded-xl group-hover/card:shadow-xl"
-                alt="Financial Model Illustration"
-              />
-            </CardItem>
-            <div className="flex justify-between items-center mt-6">
-              <CardItem
-                translateZ={20}
-                as={Badge}
-                className="px-4 py-2 text-xs font-normal dark:text-white"
-              >
-                Your Business
-              </CardItem>
-              <CardItem
-                translateZ={20}
-                as="div"
-                className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white"
-              >
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Badge variant="outline" className="group-hover/card:shadow-xl">
-                        NEW
-                      </Badge>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Latest financial data updated</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </CardItem>
-            </div>
-            <div className="flex justify-between items-center mt-6">
-              <CardItem
-                translateZ={20}
-                as={motion.div}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div>Hover or tap me!</div>
-              </CardItem>
-              <CardItem translateZ={20} className="w-64">
-                <FloatingDock items={financialLinks} />
-              </CardItem>
-            </div>
-          </CardBody>
-        </CardContainer>
+              <Card className="bg-white shadow-lg">
+                <CardHeader className="bg-green-50">
+                  <CardTitle className="text-2xl text-primary">Financial Model</CardTitle>
+                  {isFinancialForecastNotAvailable ? (
+                    <CardDescription className="text-red-500">Create a business plan to see chart and forecast</CardDescription>
+                  ) : (
+                    <CardDescription className="text-green-600">Explore your business's financial projections and analysis</CardDescription>
+                  )}
+                </CardHeader>
+                <CardContent className="pt-6">
+                  {isLoading ? (
+                    <div className="flex items-center justify-center h-24">
+                      <Loader2 className="h-8 w-8 animate-spin text-green-500" />
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <Button
+                        disabled={isFinancialForecastNotAvailable}
+                        variant="outline"
+                        className="h-32 flex flex-col items-center justify-center border-green-300 text-green-700 hover:bg-green-50"
+                        onClick={() => router.push('/dashboard/financialForecast')}
+                      >
+                        <PieChart className="h-10 w-10 mb-2 text-green-600" />
+                        <span className="text-lg font-semibold">Financial Forecast</span>
+                      </Button>
+                      <Button
+                        disabled={isFinancialForecastNotAvailable}
+                        variant="outline"
+                        className="h-32 flex flex-col items-center justify-center border-green-300 text-green-700 hover:bg-green-50"
+                        onClick={() => router.push('/dashboard/financialForecastCharts')}
+                      >
+                        <BarChart className="h-10 w-10 mb-2 text-green-600" />
+                        <span className="text-lg font-semibold">Charts</span>
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </motion.div>
+          </TabsContent>
+        </Tabs>
       </div>
+
+      <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Are you sure you want to delete this business plan?</DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete your business plan and all associated financial data.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <button>Cancel</button>
+            <button onClick={() => handleDelete(companyID)} className="bg-red-500 hover:bg-red-600">
+              {isDeleting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Delete"
+              )}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

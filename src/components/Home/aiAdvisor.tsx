@@ -3,17 +3,18 @@
 import { useState } from "react"
 import Image from "next/image"
 import { motion } from "framer-motion"
-import { Moon, Sun } from "lucide-react"
+import { ArrowRight, CheckCircle2, Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 const features = [
-  { title: "Natural Language Processing", description: "Understand and respond to user queries in natural language" },
-  { title: "Personalized Recommendations", description: "Provide tailored advice based on user preferences and history" },
-  { title: "Real-time Data Analysis", description: "Process and analyze data in real-time for up-to-date insights" },
-  { title: "Multi-platform Support", description: "Available on web, mobile, and as an API for seamless integration" },
+  { title: "Natural Language Processing", description: "Understand and respond to complex queries" },
+  { title: "Personalized Recommendations", description: "Tailored advice based on your business needs" },
+  { title: "Real-time Data Analysis", description: "Up-to-date insights for informed decisions" },
+  { title: "Multi-platform Support", description: "Seamless integration across all devices" },
 ]
 
 export default function AiAdvisor() {
@@ -23,11 +24,11 @@ export default function AiAdvisor() {
 
   const handleDemoSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setDemoResponse(`AI Advisor: Based on your query "${demoQuery}", here's my advice...`)
+    setDemoResponse(`Based on your query "${demoQuery}", here's my advice: [AI-generated response would appear here]`)
   }
 
   return (
-    <section className={`min-h-screen ${isDarkMode ? "bg-gray-900 text-white" : "bg-gradient-to-r from-blue-200 via-violet-500 to-cyan-100"}`}>
+    <div className={`min-h-screen ${isDarkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"}`}>
       <div className="container mx-auto px-4 py-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -35,11 +36,11 @@ export default function AiAdvisor() {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h1 className="text-5xl font-bold mb-6">Meet Your AI Advisor</h1>
-          <p className="text-xl mb-8">Built for the modern business to engage users and provide intelligent insights</p>
+          <h1 className="text-4xl font-bold mb-4">AI Advisor for Business</h1>
+          <p className="text-xl mb-8 text-gray-600 dark:text-gray-300">Intelligent insights for modern enterprises</p>
           <div className="flex items-center justify-center">
             <Label htmlFor="dark-mode" className="mr-2">
-              {isDarkMode ? <Moon className="h-6 w-6" /> : <Sun className="h-6 w-6" />}
+              {isDarkMode ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
             </Label>
             <Switch id="dark-mode" checked={isDarkMode} onCheckedChange={setIsDarkMode} />
           </div>
@@ -56,74 +57,79 @@ export default function AiAdvisor() {
               width={600}
               height={500}
               alt="AI Advisor"
-              className="rounded-lg shadow-2xl"
+              className="rounded-lg shadow-lg"
             />
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            <h2 className="text-3xl font-semibold mb-6">Key Features</h2>
-            <ul className="space-y-4">
+          <div>
+            <h2 className="text-2xl font-semibold mb-6">Key Features</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {features.map((feature, index) => (
-                <motion.li
+                <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.1 * index }}
-                  className="flex items-start"
                 >
-                  <svg className="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <div>
-                    <h3 className="font-semibold">{feature.title}</h3>
-                    <p className="text-sm opacity-70">{feature.description}</p>
-                  </div>
-                </motion.li>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg flex items-center">
+                        <CheckCircle2 className="w-5 h-5 mr-2 text-green-500" />
+                        {feature.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">{feature.description}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
               ))}
-            </ul>
-          </motion.div>
+            </div>
+          </div>
         </div>
 
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
-          className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8"
         >
-          <h2 className="text-3xl font-semibold mb-6 text-center">Try AI Advisor Demo</h2>
-          <form onSubmit={handleDemoSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="demo-query" className="sr-only">
-                Enter your question
-              </Label>
-              <Input
-                id="demo-query"
-                type="text"
-                placeholder="Enter your question for AI Advisor..."
-                value={demoQuery}
-                onChange={(e) => setDemoQuery(e.target.value)}
-                className="w-full"
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Get AI Advice
-            </Button>
-          </form>
-          {demoResponse && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg"
-            >
-              <p className="text-sm">{demoResponse}</p>
-            </motion.div>
-          )}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-semibold text-center">Experience AI Advisor</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleDemoSubmit} className="space-y-4">
+                <div>
+                  <Label htmlFor="demo-query" className="sr-only">
+                    Enter your business question
+                  </Label>
+                  <Input
+                    id="demo-query"
+                    type="text"
+                    placeholder="Enter your business question..."
+                    value={demoQuery}
+                    onChange={(e) => setDemoQuery(e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+                <Button type="submit" className="w-full">
+                  Get AI Advice
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </form>
+              {demoResponse && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg"
+                >
+                  <p className="text-sm">{demoResponse}</p>
+                </motion.div>
+              )}
+            </CardContent>
+          </Card>
         </motion.div>
       </div>
-    </section>
+    </div>
   )
 }
